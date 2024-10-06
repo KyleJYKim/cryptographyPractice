@@ -37,17 +37,21 @@ print()
 
 print("#Second practice")
 
-p1 = np.array([5,9])
-p2 = np.array([2,5])
-c1 = np.array([19,4])
-c2 = np.array([24,11])
+# p1 = np.array([5,9])
+# p2 = np.array([2,5])
+# c1 = np.array([19,4])
+# c2 = np.array([24,11])
+p1 = np.array([5,17])
+p2 = np.array([8,3])
+c1 = np.array([15,16])
+c2 = np.array([2,5])
 m = 2
 
 plnTxt = np.array([p1, p2])
 crtTxt = np.array([c1, c2])
 
 # Here, use extended euclidian algorith to get inverse of determinant (det^-1 = (det * a) mod 26).
-det = p1[0]*p2[1] - p1[1]*p2[0] # np.linalg.det(plnTxt) # ad - bc
+det = (p1[0]*p2[1] - p1[1]*p2[0]) % 26  # np.linalg.det(plnTxt) # ad - bc
 q = 0       # start with 0, and will contain the value of division without remainder
 tmp = det   # start with determinant, and will contain the remainder of division
 c = 26      # start with the modulus number, and will contain the value of d of the previous step.
@@ -63,27 +67,32 @@ while d != 0:
     q = int(c / d)
     print(f"q = {q}", end =" ")
 
-    tmp = c % d
+    tmp = c % d # c - q * d
     c = d
     d = tmp
     print(f"tmp = {tmp},", end =" ")
     print(f"c = {c},", end =" ")
     print(f"d = {d},", end =" ")
 
-    tmp = e - q * f
+    tmp = e - q * f # new computation for the inverse
     e = f
     f = tmp
     print(f"tmp = {tmp},", end =" ")
     print(f"e = {e},", end =" ")
     print(f"f = {f}")
 
+    if c == 1:  # if gcd is 2 we have that e is the inerse
+        e = e % det
+        break
+
 a = e % 26
 print(a)
 
-plnInv = det * np.linalg.inv(plnTxt)    # inversing without multiplying det^-1
+plnInv = np.array([[plnTxt[1][1], plnTxt[0][1]*-1],
+                   [plnTxt[1][0]*-1, plnTxt[0][0]]])
 detInv = np.dot(a, plnInv)
 recoveryFromCrtTxt = np.dot(detInv, crtTxt)
 
 print(detInv)
-print(np.mod(recoveryFromCrtTxt, 26))
+print(f"The key: \n{np.mod(recoveryFromCrtTxt, 26)}")
 print()
